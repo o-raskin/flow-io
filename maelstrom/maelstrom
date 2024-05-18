@@ -4,6 +4,6 @@
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
-nohup bash -c "sleep 30 && killall -9 java" > /dev/null 2>&1 &
+nohup bash -c "sleep 180 && killall -9 java" > /dev/null 2>&1 &
 
 exec java -Djava.awt.headless=true -jar "${SCRIPT_DIR}/lib/maelstrom.jar" "$@"
