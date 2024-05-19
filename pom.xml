@@ -36,7 +36,7 @@
         <configuration>
           <archive>
             <manifest>
-              <mainClass>com.oraskin.Main</mainClass>
+              <mainClass>com.oraskin.Application</mainClass>
             </manifest>
           </archive>
           <descriptorRefs>
