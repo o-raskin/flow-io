@@ -1,6 +1,8 @@
-package com.oraskin;
+package com.oraskin.node;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.oraskin.IdGenerator;
+import com.oraskin.routing.StdMessageProcessor;
 import com.oraskin.dto.RequestDto;
 import java.util.Collection;
 import java.util.HashSet;
@@ -15,10 +17,12 @@ public class Node {
   // includes current node id
   private final Set<String> nodeIds;
   private final IdGenerator idGenerator;
+  private final StdMessageProcessor stdClient;
 
   public Node(String nodeId, Collection<String> nodeIds) {
     this.id = nodeId;
     this.nodeIds = new HashSet<>(nodeIds);
+    this.stdClient = new StdMessageProcessor();
     this.idGenerator = new IdGenerator();
   }
 

@@ -1,10 +1,14 @@
 package com.oraskin;
 
+import com.oraskin.routing.RequestDispatcher;
+
 public class Application {
 
   public static void main(String[] args) {
-    RequestProcessor requestProcessor = new RequestProcessor();
-    requestProcessor.start();
+    RequestDispatcher requestProcessor = new RequestDispatcher();
+    while (true) {
+      requestProcessor.handleRequest();
+    }
   }
 
 }
