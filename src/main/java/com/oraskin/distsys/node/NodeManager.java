@@ -1,12 +1,17 @@
-package com.oraskin.node;
+package com.oraskin.distsys.node;
+
+import static com.oraskin.distsys.messaging.Constants.INIT_TYPE_VALUE;
+import static com.oraskin.distsys.messaging.Constants.TYPE_PARAM;
 
 import java.util.Collection;
 import java.util.Map;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class NodeManager {
 
-  private static final String INIT_REQUEST_TYPE_VALUE = "init";
-  private static final String TYPE_REQUEST_PARAM = "type";
+  private final static Logger LOG = LogManager.getLogger(NodeManager.class);
+
   private static final String NODE_ID_REQUEST_PARAM = "node_id";
   private static final String NODE_IDS_REQUEST_PARAM = "node_ids";
 
@@ -14,8 +19,8 @@ public class NodeManager {
 
   public Node getNode(Map<String, Object> requestBody) {
     if (this.node == null) {
-      if (!INIT_REQUEST_TYPE_VALUE.equals(requestBody.get(TYPE_REQUEST_PARAM))) {
-        throw new RuntimeException(String.format("Wrong type of request, expected '%s'", INIT_REQUEST_TYPE_VALUE));
+      if (!INIT_TYPE_VALUE.equals(requestBody.get(TYPE_PARAM))) {
+        throw new RuntimeException(String.format("Wrong type of request, expected '%s'", INIT_TYPE_VALUE));
       }
       this.node = createNode(requestBody);
     }
@@ -35,6 +40,7 @@ public class NodeManager {
       throw new RuntimeException(String.format("'%s' is required", NODE_IDS_REQUEST_PARAM));
     }
     this.node = new Node(nodeId, nodeIds);
+    LOG.info("Node initialized");
     return this.node;
   }
 }

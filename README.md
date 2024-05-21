@@ -12,12 +12,29 @@ Your service should be totally available, meaning that it can continue to operat
 
 #### ...
 
+## Request example
+
+**init**:
+```json
+{"src": "c1", "dest": "n1", "id": 1, "body": {"type": "init", "msg_id": 1, "node_id": "n1", "node_ids": ["n1","n2"]}}
+```
+
+**echo**:
+```json
+{"src": "c1", "dest": "n1", "id": 2, "body": {"type": "echo", "msg_id": 2, "echo": "USER_ECHO_MSG"}}
+```
+
+**generate**:
+```json
+{"src": "c1", "dest": "n1", "id": 3, "body": {"type": "generate", "msg_id": 3}}
+```
+
 ## Run
 
 1. Build package with Maven:
 > mvn package
 
-2. Run with maelstrom: \
+2. Run with maelstrom: 
 
 Challenge 1:
 > ./maelstrom/maelstrom test -w echo --bin jrun.sh --time-limit 5
