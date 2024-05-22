@@ -86,7 +86,7 @@ public class Node {
   // todo: wait responses and choose max proposal
   //    -> if (our proposal is not max) -> try again 'next' (increment and re-request)
   //    -> else -> respond
-  public Map<String, Object> nextOk() {
+  public Map<String, Object> next_ok() {
     return Map.of();
   }
 

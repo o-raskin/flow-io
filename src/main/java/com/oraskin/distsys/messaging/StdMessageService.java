@@ -20,7 +20,7 @@ public class StdMessageService {
     this.scanner = new Scanner(System.in);
   }
 
-  public void send(String src, String dest, Map<String, Object> responseBody) {
+  public void send(String src, String dest, Object responseBody) {
     try {
       Message message = new Message(0, src, dest, responseBody);
       String json = objectMapper.writeValueAsString(message);

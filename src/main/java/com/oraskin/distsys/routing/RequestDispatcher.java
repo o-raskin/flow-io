@@ -6,10 +6,14 @@ import com.oraskin.distsys.dto.Message;
 import com.oraskin.distsys.messaging.StdMessageService;
 import com.oraskin.distsys.node.Node;
 import com.oraskin.distsys.node.NodeManager;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -33,24 +37,25 @@ public class RequestDispatcher {
       return;
     }
     CompletableFuture.runAsync(() -> {
-          Map<String, Object> requestBody = request.body();
-          Node node = nodeManager.getNode(requestBody);
-          // todo: redo with reflection (resolving by method names)
-          String bodyType = (String) requestBody.get(TYPE_PARAM);
-          Map<String, Object> responseBody = switch (bodyType) {
-            case "init" -> node.init(requestBody);
-            case "echo" -> node.echo(requestBody);
-            case "generate" -> node.generate(requestBody);
-            case "next" -> node.next(requestBody);
-            case "next_ok" -> node.nextOk();
-            default -> throw new IllegalStateException("Unexpected request type: " + bodyType);
-          };
-          stdMessageProcessor.send(node.getId(), request.src(), responseBody);
-        }, executor)
-        .exceptionally(throwable -> {
-          LOG.error(throwable.getMessage());
-          return null;
-        });
+      if (!(request.body() instanceof Map requestBody)) {
+        throw new RuntimeException("Invalid request body");
+      }
+      Node node = nodeManager.getNode(requestBody);
+      Map<String, Method> methodNameToInstance = Arrays.stream(node.getClass().getDeclaredMethods())
+          .peek(m -> m.setAccessible(true))
+          .collect(Collectors.toMap(Method::getName, m -> m));
+      try {
+        String bodyType = (String) requestBody.get(TYPE_PARAM);
+        Method targetMethod = methodNameToInstance.get(bodyType);
+        Object responseBody = targetMethod.invoke(node, requestBody);
+        stdMessageProcessor.send(node.getId(), request.src(), responseBody);
+      } catch (IllegalAccessException | InvocationTargetException e) {
+        throw new RuntimeException("Node invocation failed", e);
+      }
+    }, executor).exceptionally(throwable -> {
+      LOG.error(throwable.getMessage());
+      return null;
+    });
   }
 
 }
